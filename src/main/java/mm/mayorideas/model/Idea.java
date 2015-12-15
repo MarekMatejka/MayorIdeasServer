@@ -13,6 +13,11 @@ public class Idea {
     private final int authorID;
     private final String authorName;
     private final Timestamp dateCreated;
+    private final int score;
+    private final int numOfVotes;
+    private final int numOfComments;
+    private final int userVote;
+    private final boolean isUserFollowing;
 
     public Idea(
             int id,
@@ -23,7 +28,12 @@ public class Idea {
             String location,
             int authorID,
             String authorName,
-            Timestamp dateCreated) {
+            Timestamp dateCreated,
+            int score,
+            int numOfVotes,
+            int numOfComments,
+            int userVote,
+            boolean isUserFollowing) {
         this.id = id;
         this.title = title;
         this.categoryID = categoryID;
@@ -33,6 +43,11 @@ public class Idea {
         this.authorID = authorID;
         this.authorName = authorName;
         this.dateCreated = dateCreated;
+        this.score = score;
+        this.numOfVotes = numOfVotes;
+        this.numOfComments = numOfComments;
+        this.userVote = userVote;
+        this.isUserFollowing = isUserFollowing;
     }
 
     public int getId() {
@@ -69,5 +84,25 @@ public class Idea {
 
     public Timestamp getDateCreated() {
         return dateCreated;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public int getNumOfVotes() {
+        return numOfVotes;
+    }
+
+    public int getNumOfComments() {
+        return numOfComments;
+    }
+
+    public int getUserVote() {
+        return userVote;
+    }
+
+    public boolean getIsUserFollowing() {
+        return isUserFollowing;
     }
 }

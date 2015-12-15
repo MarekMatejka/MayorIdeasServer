@@ -11,14 +11,14 @@ public class IdeaDBAccessorTest {
 
     @Test
     public void testAddIdea() throws Exception {
-        IdeaDBAccessor db = (IdeaDBAccessor) DBAccessor.getInstance(DBAccessor.Type.IDEA);
-        db.addIdea("Test title", 1, "test description", "test location", 1, new Timestamp(System.currentTimeMillis()));
+        IdeaDBAccessor db = IdeaDBAccessor.getInstance();
+        db.addIdea("Test title 2", 2, "test description 2", "test location 2", 2, new Timestamp(System.currentTimeMillis()));
     }
 
     @Test
     public void testGetIdea() throws Exception {
-        IdeaDBAccessor db = (IdeaDBAccessor) DBAccessor.getInstance(DBAccessor.Type.IDEA);
-        Idea idea = db.getIdea(1);
+        IdeaDBAccessor db = IdeaDBAccessor.getInstance();
+        Idea idea = db.getIdea(1,1);
 
         assertEquals("Test title", idea.getTitle());
         assertEquals(1, idea.getCategoryID());

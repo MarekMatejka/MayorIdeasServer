@@ -4,9 +4,10 @@ create table Category (
 	primary key (ID)
 );
 
-create table Author (
+create table User (
 	ID int not null auto_increment,
 	Name varchar(50) not null,
+	Is_Citizen boolean not null,
 	primary key (ID)
 );
 
@@ -16,30 +17,52 @@ create table Idea (
 	CategoryID int not null,
 	Description varchar(4000) not null,
 	Location varchar(50) not null,
-	AuthorID int not null,
+	UserID int not null,
 	DateCreated timestamp not null,
 	primary key (ID),
 	foreign key (CategoryID) references Category(ID),
-	foreign key (AuthorID) references Author(ID)
+	foreign key (UserID) references User(ID)
 );
 
 create table Picture (
 	ID int not null auto_increment,
 	Picture blob not null,
 	IdeaID int not null,
-	AuthorID int not null,
+	UserID int not null,
 	primary key (ID),
 	foreign key (IdeaID) references Idea(ID),
-	foreign key (AuthorID) references Author(ID)
+	foreign key (UserID) references User(ID)
 );
 
 create table Comment (
 	ID int not null auto_increment,
-	AuthorID int not null,
+	UserID int not null,
 	IdeaID int not null,
 	Text varchar(4000) not null,
 	DateCreated timestamp not null,
 	primary key (ID),
-	foreign key (AuthorID) references Author(ID),
+	foreign key (UserID) references User(ID),
 	foreign key (IdeaID) references Idea(ID)
 );
+
+create table Follows (
+	UserID int not null,
+	IdeaID int not null,
+	foreign key (UserID) references User(ID),
+	foreign key (IdeaID) references Idea(ID)
+);
+
+create table Vote (
+	UserID int not null,
+	IdeaID int not null,
+	Voted int not null,
+	DateVoted timestamp not null,
+	foreign key (UserID) references User(ID),
+	foreign key (IdeaID) references Idea(ID)
+);
+
+insert into Category values
+	(default, 'Environment'),
+	(default, 'Culture'),
+	(default, 'Transport'),
+	(default, 'Infrastructure');

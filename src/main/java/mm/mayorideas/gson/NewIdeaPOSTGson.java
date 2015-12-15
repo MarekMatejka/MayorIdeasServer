@@ -1,7 +1,5 @@
 package mm.mayorideas.gson;
 
-import java.sql.Timestamp;
-
 public class NewIdeaPOSTGson {
 
     private final String title;
@@ -9,21 +7,18 @@ public class NewIdeaPOSTGson {
     private final String description;
     private final String location;
     private final int authorID;
-    private final Timestamp dateCreated;
 
     public NewIdeaPOSTGson(
             String title,
             int categoryID,
             String description,
             String location,
-            int authorID,
-            Timestamp dateCreated) {
+            int authorID) {
         this.title = title;
         this.categoryID = categoryID;
         this.description = description;
         this.location = location;
         this.authorID = authorID;
-        this.dateCreated = dateCreated;
     }
 
     public String getTitle() {
@@ -44,9 +39,5 @@ public class NewIdeaPOSTGson {
 
     public int getAuthorID() {
         return authorID;
-    }
-
-    public Timestamp getDateCreated() {
-        return dateCreated;
     }
 }
