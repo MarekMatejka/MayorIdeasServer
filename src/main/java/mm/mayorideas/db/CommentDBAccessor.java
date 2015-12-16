@@ -97,4 +97,21 @@ public class CommentDBAccessor extends DBAccessor {
 
         return comments;
     }
+
+    public int getCommentCountForIdea(int ideaID) throws SQLException {
+        String QUERY =  "select count(*) from Comment where IdeaID = ?;";
+
+        Connection connection = getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(QUERY, Statement.RETURN_GENERATED_KEYS);
+        preparedStatement.setInt(1, ideaID);
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+        int result = resultSet.next() ? resultSet.getInt(1) : 0;
+
+        connection.close();
+        preparedStatement.close();
+
+        return result;
+
+    }
 }

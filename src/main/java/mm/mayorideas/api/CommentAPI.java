@@ -64,4 +64,17 @@ public class CommentAPI {
         Gson gson = new Gson();
         return gson.toJson(comments);
     }
+
+    @GET
+    @Path("idea/count/{idea_id}")
+    @Produces(MediaType.TEXT_PLAIN)
+    public int getCommentCountForIdea(@PathParam("idea_id") int ideaID) {
+        try {
+            CommentDBAccessor db = CommentDBAccessor.getInstance();
+            return db.getCommentCountForIdea(ideaID);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
 }
