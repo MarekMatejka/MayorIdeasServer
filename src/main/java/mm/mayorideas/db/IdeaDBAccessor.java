@@ -63,7 +63,8 @@ public class IdeaDBAccessor extends DBAccessor {
                         "left join (" +
                             "select Idea.ID, count(Comment.UserID) as count " +
                             "from Idea " +
-                            "join Comment on Idea.ID = Comment.IdeaID) as A " +
+                            "join Comment on Idea.ID = Comment.IdeaID " +
+                            "group by Idea.ID) as A " +
                         "on A.ID = Idea.ID " +
                         "left join (" +
                             "select Idea.ID, Vote.Voted as vote " +
@@ -120,7 +121,8 @@ public class IdeaDBAccessor extends DBAccessor {
                         "left join (" +
                             "select Idea.ID, count(Comment.UserID) as count " +
                             "from Idea " +
-                            "join Comment on Idea.ID = Comment.IdeaID) as A " +
+                            "join Comment on Idea.ID = Comment.IdeaID " +
+                            "group by Idea.ID) as A " +
                         "on A.ID = Idea.ID " +
                         "left join (" +
                             "select Idea.ID, Vote.Voted as vote " +
