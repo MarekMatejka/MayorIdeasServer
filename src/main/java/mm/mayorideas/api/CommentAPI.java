@@ -27,8 +27,8 @@ public class CommentAPI {
         try {
             CommentDBAccessor db = CommentDBAccessor.getInstance();
             result = db.addComment(
-                    comment.getUserID(),
                     comment.getIdeaID(),
+                    comment.getUserID(),
                     comment.getCommentText());
         }catch (SQLException e) {e.printStackTrace();}
 
