@@ -26,7 +26,7 @@ create table Idea (
 
 create table Picture (
 	ID int not null auto_increment,
-	Picture blob not null,
+	Picture mediumblob not null,
 	IdeaID int not null,
 	UserID int not null,
 	primary key (ID),
@@ -48,6 +48,7 @@ create table Comment (
 create table Follows (
 	UserID int not null,
 	IdeaID int not null,
+	primary key (UserID, IdeaID),
 	foreign key (UserID) references User(ID),
 	foreign key (IdeaID) references Idea(ID)
 );
@@ -57,6 +58,7 @@ create table Vote (
 	IdeaID int not null,
 	Voted int not null,
 	DateVoted timestamp not null,
+	primary key (UserID, IdeaID),
 	foreign key (UserID) references User(ID),
 	foreign key (IdeaID) references Idea(ID)
 );
