@@ -5,6 +5,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.*;
+import java.util.LinkedList;
+import java.util.List;
 
 public class ImagesDBAccessor extends DBAccessor {
 
@@ -76,5 +78,24 @@ public class ImagesDBAccessor extends DBAccessor {
 
         connection.close();
         return null;
+    }
+
+    public List<Integer> getImageIdsForIdea(int ideaID) throws SQLException {
+        String QUERY =  "select Picture.ID from Picture where Picture.IdeaID = ?;";
+
+        Connection connection = getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(QUERY, Statement.RETURN_GENERATED_KEYS);
+        preparedStatement.setInt(1, ideaID);
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+        List<Integer> result = new LinkedList<>();
+        while(resultSet.next()) {
+            result.add(resultSet.getInt(1));
+        }
+
+        connection.close();
+        preparedStatement.close();
+
+        return result;
     }
 }

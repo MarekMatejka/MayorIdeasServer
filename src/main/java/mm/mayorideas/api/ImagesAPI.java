@@ -1,5 +1,7 @@
 package mm.mayorideas.api;
 
+import com.google.gson.Gson;
+import mm.mayorideas.db.CommentDBAccessor;
 import mm.mayorideas.db.ImagesDBAccessor;
 
 import javax.activation.MimetypesFileTypeMap;
@@ -42,5 +44,19 @@ public class ImagesAPI {
             e.printStackTrace();
         }
         return Response.serverError().build();
+    }
+
+    @GET
+    @Path("/get/idea/{idea_id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getImageIdsForIdea(@PathParam("idea_id") int ideaID){
+        try {
+            Gson gson = new Gson();
+            ImagesDBAccessor db = ImagesDBAccessor.getInstance();
+            return gson.toJson(db.getImageIdsForIdea(ideaID));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return "[]";
     }
 }

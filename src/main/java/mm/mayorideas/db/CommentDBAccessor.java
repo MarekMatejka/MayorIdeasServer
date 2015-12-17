@@ -112,6 +112,5 @@ public class CommentDBAccessor extends DBAccessor {
         preparedStatement.close();
 
         return result;
-
     }
 }

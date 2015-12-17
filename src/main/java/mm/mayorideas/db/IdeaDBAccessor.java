@@ -76,8 +76,7 @@ public class IdeaDBAccessor extends DBAccessor {
                         "on C.ID = Idea.ID " +
                         "left join (" +
                             "select Idea.ID, Picture.ID as PID " +
-                            "from Idea join Picture on Idea.ID = Picture.IdeaID " +
-                            "limit 1) as D " +
+                            "from Idea join Picture on Idea.ID = Picture.IdeaID) as D " +
                         "on D.ID = Idea.ID " +
                 "where Idea.ID = ?;";
 
@@ -140,8 +139,7 @@ public class IdeaDBAccessor extends DBAccessor {
                         "on C.ID = Idea.ID " +
                         "left join (" +
                             "select Idea.ID, Picture.ID as PID " +
-                            "from Idea join Picture on Idea.ID = Picture.IdeaID " +
-                            "limit 1) as D " +
+                            "from Idea join Picture on Idea.ID = Picture.IdeaID) as D " +
                         "on D.ID = Idea.ID " +
                 "group by Idea.ID " +
                 "limit 10;";
