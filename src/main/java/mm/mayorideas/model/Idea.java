@@ -18,6 +18,7 @@ public class Idea {
     private final int numOfComments;
     private final int userVote;
     private final boolean isUserFollowing;
+    private final int coverImageID;
 
     public Idea(
             int id,
@@ -33,7 +34,8 @@ public class Idea {
             int numOfVotes,
             int numOfComments,
             int userVote,
-            boolean isUserFollowing) {
+            boolean isUserFollowing,
+            int coverImageID) {
         this.id = id;
         this.title = title;
         this.categoryID = categoryID;
@@ -48,6 +50,7 @@ public class Idea {
         this.numOfComments = numOfComments;
         this.userVote = userVote;
         this.isUserFollowing = isUserFollowing;
+        this.coverImageID = coverImageID;
     }
 
     public int getId() {
@@ -104,5 +107,13 @@ public class Idea {
 
     public boolean getIsUserFollowing() {
         return isUserFollowing;
+    }
+
+    public boolean isUserFollowing() {
+        return isUserFollowing;
+    }
+
+    public int getCoverImageID() {
+        return coverImageID;
     }
 }

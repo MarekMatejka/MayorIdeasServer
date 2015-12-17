@@ -55,7 +55,7 @@ public class IdeaDBAccessor extends DBAccessor {
                 "select " +
                         "Idea.ID, Idea.Title, Idea.CategoryID, Category.Name, Idea.Description, Idea.Location, " +
                         "Idea.UserID, User.Name, Idea.DateCreated, ifnull(sum(Vote.Voted), 0), count(Vote.Voted), " +
-                        "ifnull(A.count, 0), ifnull(B.vote, 0), if(C.ID > 0, true, false) " +
+                        "ifnull(A.count, 0), ifnull(B.vote, 0), if(C.ID > 0, true, false), ifnull(D.PID, 109) " +
                 "from Idea " +
                         "join Category on Idea.CategoryID = Category.ID " +
                         "join User on Idea.UserID = User.ID " +
@@ -74,6 +74,11 @@ public class IdeaDBAccessor extends DBAccessor {
                             "select Idea.ID " +
                             "from Idea join Follows on Idea.ID = Follows.IdeaID where Follows.UserID = ?) as C " +
                         "on C.ID = Idea.ID " +
+                        "left join (" +
+                            "select Idea.ID, Picture.ID as PID " +
+                            "from Idea join Picture on Idea.ID = Picture.IdeaID " +
+                            "limit 1) as D " +
+                        "on D.ID = Idea.ID " +
                 "where Idea.ID = ?;";
 
         Connection connection = getConnection();
@@ -99,7 +104,8 @@ public class IdeaDBAccessor extends DBAccessor {
                     resultSet.getInt(10),       //num of votes
                     resultSet.getInt(11),       //num of comments
                     resultSet.getInt(12),       //user vote
-                    resultSet.getBoolean(13));  //is user following
+                    resultSet.getBoolean(13),   //is user following
+                    resultSet.getInt(14));      //cover image ID
         }
 
         connection.close();
@@ -113,7 +119,7 @@ public class IdeaDBAccessor extends DBAccessor {
                 "select " +
                         "Idea.ID, Idea.Title, Idea.CategoryID, Category.Name, Idea.Description, Idea.Location, " +
                         "Idea.UserID, User.Name, Idea.DateCreated, ifnull(sum(Vote.Voted), 0), count(Vote.Voted), " +
-                        "ifnull(A.count, 0), ifnull(B.vote, 0), if(C.ID > 0, true, false) " +
+                        "ifnull(A.count, 0), ifnull(B.vote, 0), if(C.ID > 0, true, false), ifnull(D.PID, 109) " +
                 "from Idea " +
                         "join Category on Idea.CategoryID = Category.ID " +
                         "join User on Idea.UserID = User.ID " +
@@ -132,6 +138,11 @@ public class IdeaDBAccessor extends DBAccessor {
                             "select Idea.ID " +
                             "from Idea join Follows on Idea.ID = Follows.IdeaID where Follows.UserID = ?) as C " +
                         "on C.ID = Idea.ID " +
+                        "left join (" +
+                            "select Idea.ID, Picture.ID as PID " +
+                            "from Idea join Picture on Idea.ID = Picture.IdeaID " +
+                            "limit 1) as D " +
+                        "on D.ID = Idea.ID " +
                 "group by Idea.ID " +
                 "limit 10;";
 
@@ -157,7 +168,8 @@ public class IdeaDBAccessor extends DBAccessor {
                     resultSet.getInt(11),        //num of votes
                     resultSet.getInt(12),        //comment count
                     resultSet.getInt(13),        //user vote
-                    resultSet.getBoolean(14)));  //is user following
+                    resultSet.getBoolean(14),    //is user following
+                    resultSet.getInt(15)));      //cover image ID
         }
 
         connection.close();
