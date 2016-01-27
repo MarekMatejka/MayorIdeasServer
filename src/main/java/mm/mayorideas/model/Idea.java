@@ -9,7 +9,8 @@ public class Idea {
     private final int categoryID;
     private final String categoryName;
     private final String description;
-    private final String location;
+    private final double latitude;
+    private final double longitude;
     private final int authorID;
     private final String authorName;
     private final Timestamp dateCreated;
@@ -26,7 +27,8 @@ public class Idea {
             int categoryID,
             String categoryName,
             String description,
-            String location,
+            double latitude,
+            double longitude,
             int authorID,
             String authorName,
             Timestamp dateCreated,
@@ -41,7 +43,8 @@ public class Idea {
         this.categoryID = categoryID;
         this.categoryName = categoryName;
         this.description = description;
-        this.location = location;
+        this.latitude = latitude;
+        this.longitude = longitude;
         this.authorID = authorID;
         this.authorName = authorName;
         this.dateCreated = dateCreated;
@@ -73,8 +76,12 @@ public class Idea {
         return description;
     }
 
-    public String getLocation() {
-        return location;
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
     }
 
     public int getAuthorID() {

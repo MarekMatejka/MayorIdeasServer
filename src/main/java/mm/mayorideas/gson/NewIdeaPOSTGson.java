@@ -5,19 +5,22 @@ public class NewIdeaPOSTGson {
     private final String title;
     private final int categoryID;
     private final String description;
-    private final String location;
+    private final double latitude;
+    private final double longitude;
     private final int authorID;
 
     public NewIdeaPOSTGson(
             String title,
             int categoryID,
             String description,
-            String location,
+            double latitude,
+            double longitude,
             int authorID) {
         this.title = title;
         this.categoryID = categoryID;
         this.description = description;
-        this.location = location;
+        this.latitude = latitude;
+        this.longitude = longitude;
         this.authorID = authorID;
     }
 
@@ -33,8 +36,12 @@ public class NewIdeaPOSTGson {
         return description;
     }
 
-    public String getLocation() {
-        return location;
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
     }
 
     public int getAuthorID() {

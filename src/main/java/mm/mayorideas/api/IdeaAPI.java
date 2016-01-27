@@ -29,7 +29,8 @@ public class IdeaAPI {
                         idea.getTitle(),
                         idea.getCategoryID(),
                         idea.getDescription(),
-                        idea.getLocation(),
+                        idea.getLatitude(),
+                        idea.getLongitude(),
                         idea.getAuthorID(),
                         new Timestamp(System.currentTimeMillis()));
         }catch (SQLException e) {e.printStackTrace();}

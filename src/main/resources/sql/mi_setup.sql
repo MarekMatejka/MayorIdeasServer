@@ -16,7 +16,6 @@ create table Idea (
 	Title varchar(200) not null,
 	CategoryID int not null,
 	Description varchar(4000) not null,
-	Location varchar(50) not null,
 	UserID int not null,
 	DateCreated timestamp not null,
 	primary key (ID),
