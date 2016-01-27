@@ -180,19 +180,68 @@ public class IdeaDBAccessor extends DBAccessor {
         return ideas;
     }
 
-    public List<Idea> getClosestIdeas(double lat, double lang) throws SQLException {
-
-        String QUERY =  "select * from (" +
-                            "select A.*, sqrt(pow(?-a.lat, 2)+pow(?-a.lang, 2)) dst from LatLangTest A) t " +
-                        "order by dst " +
-                        "limit 10";
+    public List<Idea> getClosestIdeas(double lat, double lang, int userID) throws SQLException {
+        String QUERY =
+                "select " +
+                    "Idea.ID, Idea.Title, Idea.CategoryID, Category.Name, Idea.Description, Idea.Latitude, Idea.Longitude, " +
+                    "Idea.UserID, User.Name, Idea.DateCreated, ifnull(sum(Vote.Voted), 0), count(Vote.Voted), " +
+                    "ifnull(A.count, 0), ifnull(B.vote, 0), if(C.ID > 0, true, false), ifnull(D.PID, 109), " +
+                    "sqrt(pow(?-Idea.Latitude, 2)+pow(?-Idea.Longitude, 2)) dst " +
+                "from Idea " +
+                    "join Category on Idea.CategoryID = Category.ID " +
+                    "join User on Idea.UserID = User.ID " +
+                    "left join Vote on Idea.ID = Vote.IdeaID " +
+                    "left join (" +
+                        "select Idea.ID, count(Comment.UserID) as count " +
+                        "from Idea " +
+                        "join Comment on Idea.ID = Comment.IdeaID " +
+                        "group by Idea.ID) as A " +
+                    "on A.ID = Idea.ID " +
+                    "left join (" +
+                        "select Idea.ID, Vote.Voted as vote " +
+                        "from Idea join Vote on Idea.ID = Vote.IdeaID where Vote.UserID = ?) as B " +
+                    "on B.ID = Idea.ID " +
+                    "left join (" +
+                        "select Idea.ID " +
+                        "from Idea join Follows on Idea.ID = Follows.IdeaID where Follows.UserID = ?) as C " +
+                    "on C.ID = Idea.ID " +
+                    "left join (" +
+                        "select Idea.ID, Picture.ID as PID " +
+                        "from Idea join Picture on Idea.ID = Picture.IdeaID) as D " +
+                    "on D.ID = Idea.ID " +
+                "group by Idea.ID " +
+                "order by dst " +
+                "limit 10;";
 
         Connection connection = getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(QUERY);
         preparedStatement.setDouble(1, lat);
         preparedStatement.setDouble(2, lang);
+        preparedStatement.setInt(3, userID);
+        preparedStatement.setInt(4, userID);
         ResultSet resultSet = preparedStatement.executeQuery();
 
-        return null;
+        List<Idea> ideas = new LinkedList<>();
+        while(resultSet.next()) {
+            ideas.add(new Idea(
+                    resultSet.getInt(1),         //id
+                    resultSet.getString(2),      //title
+                    resultSet.getInt(3),         //category id
+                    resultSet.getString(4),      //category name
+                    resultSet.getString(5),      //description
+                    resultSet.getDouble(6),      //latitude
+                    resultSet.getDouble(7),      //longitude
+                    resultSet.getInt(8),         //user id
+                    resultSet.getString(9),      //user name
+                    resultSet.getTimestamp(10),   //date created
+                    resultSet.getInt(11),        //score
+                    resultSet.getInt(12),        //num of votes
+                    resultSet.getInt(13),        //comment count
+                    resultSet.getInt(14),        //user vote
+                    resultSet.getBoolean(15),    //is user following
+                    resultSet.getInt(16)));      //cover image ID
+        }
+
+        return ideas;
     }
 }

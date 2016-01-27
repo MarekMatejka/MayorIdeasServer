@@ -71,4 +71,23 @@ public class IdeaAPI {
         System.out.println(result);
         return result;
     }
+
+    @GET
+    @Path("closest")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getTop10ClosestIdeas(@QueryParam("user_id") int userID,
+                                       @QueryParam("lat") double latitude,
+                                       @QueryParam("long") double longitude) {
+        System.out.println("som tu closest");
+        Gson gson = new Gson();
+        String result = "";
+        try {
+            IdeaDBAccessor db = IdeaDBAccessor.getInstance();
+            result = gson.toJson(db.getClosestIdeas(latitude, longitude, userID));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        System.out.println(result);
+        return result;
+    }
 }
