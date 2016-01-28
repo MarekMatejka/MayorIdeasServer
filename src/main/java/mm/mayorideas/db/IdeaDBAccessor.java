@@ -8,6 +8,35 @@ import java.util.List;
 
 public class IdeaDBAccessor extends DBAccessor {
 
+    private static final String SELECT_IDEA = "select " +
+            "Idea.ID, Idea.Title, Idea.CategoryID, Category.Name, Idea.Description, Idea.Latitude, Idea.Longitude, " +
+            "Idea.UserID, User.Name, Idea.DateCreated, ifnull(sum(Vote.Voted), 0) score, count(Vote.Voted) votes, " +
+            "ifnull(A.count, 0) comments, ifnull(B.vote, 0) user_vote, if(C.ID > 0, true, false) isFollowing, " +
+            "ifnull(D.PID, 109) cover_image_ID ";
+
+    private static final String FROM_IDEA = "from Idea " +
+            "join Category on Idea.CategoryID = Category.ID " +
+            "join User on Idea.UserID = User.ID " +
+            "left join Vote on Idea.ID = Vote.IdeaID " +
+            "left join (" +
+            "select Idea.ID, count(Comment.UserID) as count " +
+            "from Idea " +
+            "join Comment on Idea.ID = Comment.IdeaID " +
+            "group by Idea.ID) as A " +
+            "on A.ID = Idea.ID " +
+            "left join (" +
+            "select Idea.ID, Vote.Voted as vote " +
+            "from Idea join Vote on Idea.ID = Vote.IdeaID where Vote.UserID = ?) as B " +
+            "on B.ID = Idea.ID " +
+            "left join (" +
+            "select Idea.ID " +
+            "from Idea join Follows on Idea.ID = Follows.IdeaID where Follows.UserID = ?) as C " +
+            "on C.ID = Idea.ID " +
+            "left join (" +
+            "select Idea.ID, Picture.ID as PID " +
+            "from Idea join Picture on Idea.ID = Picture.IdeaID) as D " +
+            "on D.ID = Idea.ID ";
+
     private static IdeaDBAccessor dbAccessor = null;
 
     public static IdeaDBAccessor getInstance() {
@@ -54,32 +83,8 @@ public class IdeaDBAccessor extends DBAccessor {
 
     public Idea getIdea(int ID, int userID) throws SQLException {
         String QUERY =
-                "select " +
-                        "Idea.ID, Idea.Title, Idea.CategoryID, Category.Name, Idea.Description, Idea.Latitude, Idea.Longitude, " +
-                        "Idea.UserID, User.Name, Idea.DateCreated, ifnull(sum(Vote.Voted), 0), count(Vote.Voted), " +
-                        "ifnull(A.count, 0), ifnull(B.vote, 0), if(C.ID > 0, true, false), ifnull(D.PID, 109) " +
-                "from Idea " +
-                        "join Category on Idea.CategoryID = Category.ID " +
-                        "join User on Idea.UserID = User.ID " +
-                        "left join Vote on Idea.ID = Vote.IdeaID " +
-                        "left join (" +
-                            "select Idea.ID, count(Comment.UserID) as count " +
-                            "from Idea " +
-                            "join Comment on Idea.ID = Comment.IdeaID " +
-                            "group by Idea.ID) as A " +
-                        "on A.ID = Idea.ID " +
-                        "left join (" +
-                            "select Idea.ID, Vote.Voted as vote " +
-                            "from Idea join Vote on Idea.ID = Vote.IdeaID where Vote.UserID = ?) as B " +
-                        "on B.ID = Idea.ID " +
-                        "left join (" +
-                            "select Idea.ID " +
-                            "from Idea join Follows on Idea.ID = Follows.IdeaID where Follows.UserID = ?) as C " +
-                        "on C.ID = Idea.ID " +
-                        "left join (" +
-                            "select Idea.ID, Picture.ID as PID " +
-                            "from Idea join Picture on Idea.ID = Picture.IdeaID) as D " +
-                        "on D.ID = Idea.ID " +
+                SELECT_IDEA +
+                FROM_IDEA +
                 "where Idea.ID = ?;";
 
         Connection connection = getConnection();
@@ -89,26 +94,7 @@ public class IdeaDBAccessor extends DBAccessor {
         preparedStatement.setInt(3, ID);
         ResultSet resultSet = preparedStatement.executeQuery();
 
-        Idea idea = null;
-        if(resultSet.next()) {
-            idea = new Idea(
-                    ID,
-                    resultSet.getString(1),     //title
-                    resultSet.getInt(2),        //category id
-                    resultSet.getString(3),     //category name
-                    resultSet.getString(4),     //description
-                    resultSet.getDouble(5),     //latitude
-                    resultSet.getDouble(6),     //longitude
-                    resultSet.getInt(7),        //user id
-                    resultSet.getString(8),     //user name
-                    resultSet.getTimestamp(9),  //date created
-                    resultSet.getInt(10),       //score
-                    resultSet.getInt(11),       //num of votes
-                    resultSet.getInt(12),       //num of comments
-                    resultSet.getInt(13),       //user vote
-                    resultSet.getBoolean(14),   //is user following
-                    resultSet.getInt(15));      //cover image ID
-        }
+        Idea idea = getIdeasFromResultSet(resultSet).get(0);
 
         connection.close();
         preparedStatement.close();
@@ -118,33 +104,10 @@ public class IdeaDBAccessor extends DBAccessor {
 
     public List<Idea> getTop10Ideas(int userID) throws SQLException {
         String QUERY =
-                "select " +
-                        "Idea.ID, Idea.Title, Idea.CategoryID, Category.Name, Idea.Description, Idea.Latitude, Idea.Longitude, " +
-                        "Idea.UserID, User.Name, Idea.DateCreated, ifnull(sum(Vote.Voted), 0), count(Vote.Voted), " +
-                        "ifnull(A.count, 0), ifnull(B.vote, 0), if(C.ID > 0, true, false), ifnull(D.PID, 109) " +
-                "from Idea " +
-                        "join Category on Idea.CategoryID = Category.ID " +
-                        "join User on Idea.UserID = User.ID " +
-                        "left join Vote on Idea.ID = Vote.IdeaID " +
-                        "left join (" +
-                            "select Idea.ID, count(Comment.UserID) as count " +
-                            "from Idea " +
-                            "join Comment on Idea.ID = Comment.IdeaID " +
-                            "group by Idea.ID) as A " +
-                        "on A.ID = Idea.ID " +
-                        "left join (" +
-                            "select Idea.ID, Vote.Voted as vote " +
-                            "from Idea join Vote on Idea.ID = Vote.IdeaID where Vote.UserID = ?) as B " +
-                        "on B.ID = Idea.ID " +
-                        "left join (" +
-                            "select Idea.ID " +
-                            "from Idea join Follows on Idea.ID = Follows.IdeaID where Follows.UserID = ?) as C " +
-                        "on C.ID = Idea.ID " +
-                        "left join (" +
-                            "select Idea.ID, Picture.ID as PID " +
-                            "from Idea join Picture on Idea.ID = Picture.IdeaID) as D " +
-                        "on D.ID = Idea.ID " +
+                SELECT_IDEA +
+                FROM_IDEA +
                 "group by Idea.ID " +
+                "order by score desc " +
                 "limit 10;";
 
         Connection connection = getConnection();
@@ -153,26 +116,7 @@ public class IdeaDBAccessor extends DBAccessor {
         preparedStatement.setInt(2, userID);
         ResultSet resultSet = preparedStatement.executeQuery();
 
-        List<Idea> ideas = new LinkedList<>();
-        while(resultSet.next()) {
-            ideas.add(new Idea(
-                    resultSet.getInt(1),         //id
-                    resultSet.getString(2),      //title
-                    resultSet.getInt(3),         //category id
-                    resultSet.getString(4),      //category name
-                    resultSet.getString(5),      //description
-                    resultSet.getDouble(6),      //latitude
-                    resultSet.getDouble(7),      //longitude
-                    resultSet.getInt(8),         //user id
-                    resultSet.getString(9),      //user name
-                    resultSet.getTimestamp(10),   //date created
-                    resultSet.getInt(11),        //score
-                    resultSet.getInt(12),        //num of votes
-                    resultSet.getInt(13),        //comment count
-                    resultSet.getInt(14),        //user vote
-                    resultSet.getBoolean(15),    //is user following
-                    resultSet.getInt(16)));      //cover image ID
-        }
+        List<Idea> ideas = getIdeasFromResultSet(resultSet);
 
         connection.close();
         preparedStatement.close();
@@ -182,35 +126,10 @@ public class IdeaDBAccessor extends DBAccessor {
 
     public List<Idea> getClosestIdeas(double lat, double lang, int userID) throws SQLException {
         String QUERY =
-                "select " +
-                    "Idea.ID, Idea.Title, Idea.CategoryID, Category.Name, Idea.Description, Idea.Latitude, Idea.Longitude, " +
-                    "Idea.UserID, User.Name, Idea.DateCreated, ifnull(sum(Vote.Voted), 0), count(Vote.Voted), " +
-                    "ifnull(A.count, 0), ifnull(B.vote, 0), if(C.ID > 0, true, false), ifnull(D.PID, 109), " +
-                    "sqrt(pow(?-Idea.Latitude, 2)+pow(?-Idea.Longitude, 2)) dst " +
-                "from Idea " +
-                    "join Category on Idea.CategoryID = Category.ID " +
-                    "join User on Idea.UserID = User.ID " +
-                    "left join Vote on Idea.ID = Vote.IdeaID " +
-                    "left join (" +
-                        "select Idea.ID, count(Comment.UserID) as count " +
-                        "from Idea " +
-                        "join Comment on Idea.ID = Comment.IdeaID " +
-                        "group by Idea.ID) as A " +
-                    "on A.ID = Idea.ID " +
-                    "left join (" +
-                        "select Idea.ID, Vote.Voted as vote " +
-                        "from Idea join Vote on Idea.ID = Vote.IdeaID where Vote.UserID = ?) as B " +
-                    "on B.ID = Idea.ID " +
-                    "left join (" +
-                        "select Idea.ID " +
-                        "from Idea join Follows on Idea.ID = Follows.IdeaID where Follows.UserID = ?) as C " +
-                    "on C.ID = Idea.ID " +
-                    "left join (" +
-                        "select Idea.ID, Picture.ID as PID " +
-                        "from Idea join Picture on Idea.ID = Picture.IdeaID) as D " +
-                    "on D.ID = Idea.ID " +
+                SELECT_IDEA + ", sqrt(pow(?-Idea.Latitude, 2)+pow(?-Idea.Longitude, 2)) dst " +
+                FROM_IDEA +
                 "group by Idea.ID " +
-                "order by dst " +
+                "order by dst asc " +
                 "limit 10;";
 
         Connection connection = getConnection();
@@ -221,6 +140,15 @@ public class IdeaDBAccessor extends DBAccessor {
         preparedStatement.setInt(4, userID);
         ResultSet resultSet = preparedStatement.executeQuery();
 
+        List<Idea> ideas = getIdeasFromResultSet(resultSet);
+
+        connection.close();
+        preparedStatement.close();
+
+        return ideas;
+    }
+
+    private List<Idea> getIdeasFromResultSet(ResultSet resultSet) throws SQLException {
         List<Idea> ideas = new LinkedList<>();
         while(resultSet.next()) {
             ideas.add(new Idea(
@@ -233,7 +161,7 @@ public class IdeaDBAccessor extends DBAccessor {
                     resultSet.getDouble(7),      //longitude
                     resultSet.getInt(8),         //user id
                     resultSet.getString(9),      //user name
-                    resultSet.getTimestamp(10),   //date created
+                    resultSet.getTimestamp(10),  //date created
                     resultSet.getInt(11),        //score
                     resultSet.getInt(12),        //num of votes
                     resultSet.getInt(13),        //comment count
@@ -241,6 +169,50 @@ public class IdeaDBAccessor extends DBAccessor {
                     resultSet.getBoolean(15),    //is user following
                     resultSet.getInt(16)));      //cover image ID
         }
+        return ideas;
+    }
+
+    public List<Idea> getMyIdeas(int userID) throws SQLException {
+        String QUERY =
+                SELECT_IDEA +
+                FROM_IDEA +
+                "where Idea.UserID = ? " +
+                "group by Idea.ID " +
+                "order by Idea.ID desc;";
+
+        Connection connection = getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(QUERY);
+        preparedStatement.setInt(1, userID);
+        preparedStatement.setInt(2, userID);
+        preparedStatement.setInt(3, userID);
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+        List<Idea> ideas = getIdeasFromResultSet(resultSet);
+
+        connection.close();
+        preparedStatement.close();
+
+        return ideas;
+    }
+
+    public List<Idea> getFollowingIdeas(int userID) throws SQLException {
+        String QUERY =
+                SELECT_IDEA +
+                        FROM_IDEA +
+                        "group by Idea.ID " +
+                        "having isFollowing = true " +
+                        "order by Idea.ID desc;";
+
+        Connection connection = getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(QUERY);
+        preparedStatement.setInt(1, userID);
+        preparedStatement.setInt(2, userID);
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+        List<Idea> ideas = getIdeasFromResultSet(resultSet);
+
+        connection.close();
+        preparedStatement.close();
 
         return ideas;
     }

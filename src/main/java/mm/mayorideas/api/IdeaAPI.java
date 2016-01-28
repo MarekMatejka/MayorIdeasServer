@@ -18,7 +18,7 @@ public class IdeaAPI {
     @Path("add")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
-    public String addNewParcel(String message) {
+    public String addNewIdea(String message) {
         Gson gson = new Gson();
         Type type = new TypeToken<NewIdeaPOSTGson>() {}.getType();
         NewIdeaPOSTGson idea = gson.fromJson(message, type);
@@ -41,7 +41,7 @@ public class IdeaAPI {
     @GET
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public String getParcelByID(
+    public String getIdeaByID(
            @PathParam("id") String id,
            @QueryParam("user_id") int userID) {
        Gson gson = new Gson();
@@ -84,6 +84,38 @@ public class IdeaAPI {
         try {
             IdeaDBAccessor db = IdeaDBAccessor.getInstance();
             result = gson.toJson(db.getClosestIdeas(latitude, longitude, userID));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        System.out.println(result);
+        return result;
+    }
+
+    @GET
+    @Path("my")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getMyIdeas(@QueryParam("user_id") int userID) {
+        Gson gson = new Gson();
+        String result = "";
+        try {
+            IdeaDBAccessor db = IdeaDBAccessor.getInstance();
+            result = gson.toJson(db.getMyIdeas(userID));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        System.out.println(result);
+        return result;
+    }
+
+    @GET
+    @Path("following")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getFollowingIdeas(@QueryParam("user_id") int userID) {
+        Gson gson = new Gson();
+        String result = "";
+        try {
+            IdeaDBAccessor db = IdeaDBAccessor.getInstance();
+            result = gson.toJson(db.getFollowingIdeas(userID));
         } catch (SQLException e) {
             e.printStackTrace();
         }
