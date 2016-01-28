@@ -9,7 +9,7 @@ import java.util.List;
 public class IdeaDBAccessor extends DBAccessor {
 
     private static final String SELECT_IDEA = "select " +
-            "Idea.ID, Idea.Title, Idea.CategoryID, Category.Name, Idea.Description, Idea.Latitude, Idea.Longitude, " +
+            "Idea.ID, Idea.Title, Idea.CategoryID, Category.Name cat_name, Idea.Description, Idea.Latitude, Idea.Longitude, " +
             "Idea.UserID, User.Name, Idea.DateCreated, ifnull(sum(Vote.Voted), 0) score, count(Vote.Voted) votes, " +
             "ifnull(A.count, 0) comments, ifnull(B.vote, 0) user_vote, if(C.ID > 0, true, false) isFollowing, " +
             "ifnull(D.PID, 109) cover_image_ID ";
@@ -202,6 +202,42 @@ public class IdeaDBAccessor extends DBAccessor {
                         "group by Idea.ID " +
                         "having isFollowing = true " +
                         "order by Idea.ID desc;";
+
+        Connection connection = getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(QUERY);
+        preparedStatement.setInt(1, userID);
+        preparedStatement.setInt(2, userID);
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+        List<Idea> ideas = getIdeasFromResultSet(resultSet);
+
+        connection.close();
+        preparedStatement.close();
+
+        return ideas;
+    }
+
+    public List<Idea> getTrendingIdeas(int userID) throws SQLException {
+        String QUERY =
+            "select *, (votes2+comments2) interactions " +
+            "from ( " +
+                SELECT_IDEA + ", count(Vote2.Voted) votes2, ifnull(A2.count, 0) comments2 " +
+                FROM_IDEA +
+                    "left join (" +
+                        "select Vote.IdeaID, Vote.Voted " +
+                        "from Vote " +
+                        "where cast(Vote.DateVoted as Date) >= date_sub(current_date, interval 7 day)) as Vote2 " +
+                    "on Idea.ID = Vote2.IdeaID " +
+                    "left join (" +
+                        "select Idea.ID, count(Comment.UserID) as count " +
+                        "from Idea " +
+                        "join Comment on Idea.ID = Comment.IdeaID " +
+                        "where cast(Comment.DateCreated as Date) >= date_sub(current_date, interval 7 day) " +
+                        "group by Idea.ID) as A2 " +
+                    "on A2.ID = Idea.ID " +
+                "group by Idea.ID ) as X "+
+            "order by interactions desc "+
+            "limit 10;";
 
         Connection connection = getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(QUERY);

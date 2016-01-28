@@ -122,4 +122,20 @@ public class IdeaAPI {
         System.out.println(result);
         return result;
     }
+
+    @GET
+    @Path("trending")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getTrendingIdeas(@QueryParam("user_id") int userID) {
+        Gson gson = new Gson();
+        String result = "";
+        try {
+            IdeaDBAccessor db = IdeaDBAccessor.getInstance();
+            result = gson.toJson(db.getTrendingIdeas(userID));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        System.out.println(result);
+        return result;
+    }
 }
