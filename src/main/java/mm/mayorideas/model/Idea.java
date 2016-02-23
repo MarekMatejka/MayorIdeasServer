@@ -20,6 +20,7 @@ public class Idea {
     private final int userVote;
     private final boolean isUserFollowing;
     private final int coverImageID;
+    private final IdeaState ideaState;
 
     public Idea(
             int id,
@@ -37,7 +38,8 @@ public class Idea {
             int numOfComments,
             int userVote,
             boolean isUserFollowing,
-            int coverImageID) {
+            int coverImageID,
+            int ideaStateID) {
         this.id = id;
         this.title = title;
         this.categoryID = categoryID;
@@ -54,6 +56,7 @@ public class Idea {
         this.userVote = userVote;
         this.isUserFollowing = isUserFollowing;
         this.coverImageID = coverImageID;
+        this.ideaState = IdeaState.valueOf(ideaStateID);
     }
 
     public int getId() {
@@ -122,5 +125,9 @@ public class Idea {
 
     public int getCoverImageID() {
         return coverImageID;
+    }
+
+    public IdeaState getIdeaState() {
+        return ideaState;
     }
 }

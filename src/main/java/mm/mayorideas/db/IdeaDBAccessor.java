@@ -1,6 +1,7 @@
 package mm.mayorideas.db;
 
 import mm.mayorideas.model.Idea;
+import mm.mayorideas.model.IdeaState;
 
 import java.sql.*;
 import java.util.LinkedList;
@@ -12,7 +13,7 @@ public class IdeaDBAccessor extends DBAccessor {
             "Idea.ID, Idea.Title, Idea.CategoryID, Category.Name cat_name, Idea.Description, Idea.Latitude, Idea.Longitude, " +
             "Idea.UserID, User.Name, Idea.DateCreated, ifnull(sum(Vote.Voted), 0) score, count(Vote.Voted) votes, " +
             "ifnull(A.count, 0) comments, ifnull(B.vote, 0) user_vote, if(C.ID > 0, true, false) isFollowing, " +
-            "ifnull(D.PID, 109) cover_image_ID ";
+            "ifnull(D.PID, 109) cover_image_ID, Idea.State ";
 
     private static final String FROM_IDEA = "from Idea " +
             "join Category on Idea.CategoryID = Category.ID " +
@@ -59,7 +60,7 @@ public class IdeaDBAccessor extends DBAccessor {
             int userID,
             Timestamp dateCreated) throws SQLException {
 
-        String QUERY = "insert into Idea values(default, ?, ?, ?, ?, ?, ?, ?);";
+        String QUERY = "insert into Idea values(default, ?, ?, ?, ?, ?, ?, ?, ?);";
 
         Connection connection = getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(QUERY, Statement.RETURN_GENERATED_KEYS);
@@ -70,6 +71,7 @@ public class IdeaDBAccessor extends DBAccessor {
         preparedStatement.setTimestamp(5, dateCreated);
         preparedStatement.setDouble(6, latitude);
         preparedStatement.setDouble(7, longitude);
+        preparedStatement.setInt(8, IdeaState.OPEN.getId());
         preparedStatement.executeUpdate();
 
         ResultSet ids = preparedStatement.getGeneratedKeys();
@@ -167,7 +169,8 @@ public class IdeaDBAccessor extends DBAccessor {
                     resultSet.getInt(13),        //comment count
                     resultSet.getInt(14),        //user vote
                     resultSet.getBoolean(15),    //is user following
-                    resultSet.getInt(16)));      //cover image ID
+                    resultSet.getInt(16),        //cover image ID
+                    resultSet.getInt(17)));      //state
         }
         return ideas;
     }
