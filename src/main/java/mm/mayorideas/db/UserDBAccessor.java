@@ -4,6 +4,7 @@ import com.sun.istack.internal.Nullable;
 import mm.mayorideas.gson.LoginDetails;
 import mm.mayorideas.gson.LoginDetailsResponse;
 import mm.mayorideas.gson.NewUserDetails;
+import mm.mayorideas.gson.UserStats;
 
 import java.sql.*;
 
@@ -69,5 +70,38 @@ public class UserDBAccessor extends DBAccessor {
         preparedStatement.close();
 
         return result;
+    }
+
+    public @Nullable UserStats getUserStats(int userID) throws SQLException {
+        String QUERY =
+                "select A.UserID, ideas, votes, comments, follows from (" +
+                    "select count(*) ideas, UserID from Idea where UserID = ?) as A " +
+                    "join (select count(*) votes, UserID from Vote where UserID = ?) as B on A.UserID = B.UserID " +
+                    "join (select count(*) comments, UserID from Comment where UserID = ?) as C on A.UserID = B.UserID " +
+                    "join (select count(*) follows, UserID from Follows where UserID = ?) as D on A.UserID = D.UserID;";
+
+        Connection connection = getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(QUERY);
+        preparedStatement.setInt(1, userID);
+        preparedStatement.setInt(2, userID);
+        preparedStatement.setInt(3, userID);
+        preparedStatement.setInt(4, userID);
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+        UserStats stats = null;
+        if (resultSet.next()) {
+            stats = new UserStats(
+                    resultSet.getInt(1),    //userID
+                    resultSet.getInt(2),    //# of ideas
+                    resultSet.getInt(3),    //# of votes
+                    resultSet.getInt(4),    //# of comments
+                    resultSet.getInt(5)     //# of follows
+            );
+        }
+
+        connection.close();
+        preparedStatement.close();
+
+        return stats;
     }
 }
