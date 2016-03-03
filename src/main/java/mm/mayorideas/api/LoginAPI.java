@@ -8,8 +8,11 @@ import mm.mayorideas.gson.LoginDetails;
 import mm.mayorideas.gson.LoginDetailsResponse;
 import mm.mayorideas.gson.NewUserDetails;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.lang.reflect.Type;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -20,7 +23,10 @@ public class LoginAPI {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public String login(String message) {
+    public String login(String message,
+                        @Context HttpServletResponse response) {
+        response.addHeader("Access-Control-Allow-Origin", "*");
+
         Gson gson = new Gson();
         Type type = new TypeToken<LoginDetails>() {}.getType();
         LoginDetails loginDetails = gson.fromJson(message, type);
@@ -51,6 +57,19 @@ public class LoginAPI {
 
     private String createLoginResponseForNewUser(Gson gson, NewUserDetails newUserDetails, int result) {
         return gson.toJson(new LoginDetailsResponse(result, newUserDetails.getUsername(), newUserDetails.getName()));
+    }
+
+    @OPTIONS
+    public Response forceCollectParcelOptions(@HeaderParam("Access-Control-Request-Headers") String request) {
+        return getResponse(request);
+    }
+
+    private Response getResponse(@HeaderParam("Access-Control-Request-Headers") String request) {
+        Response.ResponseBuilder rb = Response.ok();
+        rb.header("Access-Control-Allow-Origin", "*")
+                .header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+                .header("Access-Control-Allow-Headers", request);
+        return rb.build();
     }
 
 }

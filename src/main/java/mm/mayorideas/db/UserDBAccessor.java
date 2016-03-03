@@ -7,6 +7,7 @@ import mm.mayorideas.gson.NewUserDetails;
 import mm.mayorideas.gson.UserStats;
 
 import java.sql.*;
+import java.util.Collections;
 
 public class UserDBAccessor extends DBAccessor {
 
@@ -26,20 +27,21 @@ public class UserDBAccessor extends DBAccessor {
     public @Nullable LoginDetailsResponse verifyLoginDetails(LoginDetails loginDetails) throws SQLException {
         String QUERY =  "select User.ID, User.Username, User.Name " +
                         "from User " +
-                        "where User.Username = ? and User.Password = ?;";
+                        "where User.Username = ? and User.Password = ? and User.isCitizen = ?;";
 
         Connection connection = getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(QUERY);
         preparedStatement.setString(1, loginDetails.getUsername());
         preparedStatement.setString(2, loginDetails.getPassword());
+        preparedStatement.setBoolean(3, loginDetails.isCitizen());
         ResultSet resultSet = preparedStatement.executeQuery();
 
         LoginDetailsResponse response = null;
         if (resultSet.next()) {
             response = new LoginDetailsResponse(
-                    resultSet.getInt(1), //ID
+                    resultSet.getInt(1),    //ID
                     resultSet.getString(2), //Username
-                    resultSet.getString(3) //Name
+                    resultSet.getString(3)  //Name
             );
         }
 
