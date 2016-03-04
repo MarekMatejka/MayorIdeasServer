@@ -279,4 +279,25 @@ public class IdeaDBAccessor extends DBAccessor {
 
         return ideas;
     }
+
+    public List<Idea> getAllIdeas() throws SQLException {
+        String QUERY =
+                SELECT_IDEA +
+                        FROM_IDEA +
+                        "group by Idea.ID " +
+                        "order by Idea.ID desc;";
+
+        Connection connection = getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(QUERY);
+        preparedStatement.setInt(1, -1); //no user
+        preparedStatement.setInt(2, -1); //no user
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+        List<Idea> ideas = getIdeasFromResultSet(resultSet);
+
+        connection.close();
+        preparedStatement.close();
+
+        return ideas;
+    }
 }

@@ -5,7 +5,9 @@ import com.google.gson.reflect.TypeToken;
 import mm.mayorideas.db.IdeaDBAccessor;
 import mm.mayorideas.gson.NewIdeaPOSTGson;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import java.lang.reflect.Type;
 import java.sql.SQLException;
@@ -150,6 +152,23 @@ public class IdeaAPI {
         try {
             IdeaDBAccessor db = IdeaDBAccessor.getInstance();
             result = gson.toJson(db.getIdeasInCategory(categoryID, userID));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        System.out.println(result);
+        return result;
+    }
+
+    @GET
+    @Path("all")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getTrendingIdeas(@Context HttpServletResponse response) {
+        response.addHeader("Access-Control-Allow-Origin", "*");
+        Gson gson = new Gson();
+        String result = "";
+        try {
+            IdeaDBAccessor db = IdeaDBAccessor.getInstance();
+            result = gson.toJson(db.getAllIdeas());
         } catch (SQLException e) {
             e.printStackTrace();
         }
