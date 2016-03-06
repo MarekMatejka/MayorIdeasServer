@@ -42,7 +42,7 @@ public class CommentDBAccessor extends DBAccessor {
     }
 
     public List<Comment> getAllCommentsForIdea(int ideaID) throws SQLException {
-        String QUERY = "select Comment.ID, Comment.UserID, Comment.IdeaID, User.Name, Comment.Text, Comment.DateCreated " +
+        String QUERY = "select Comment.ID, Comment.UserID, Comment.IdeaID, User.Name, Comment.Text, Comment.DateCreated, User.isCitizen " +
                        "from Comment join User on Comment.UserID = User.ID " +
                        "where Comment.IdeaID = ? " +
                        "order by Comment.DateCreated DESC;";
@@ -60,7 +60,8 @@ public class CommentDBAccessor extends DBAccessor {
                             resultSet.getInt(3),         //idea ID
                             resultSet.getString(4),      //user name
                             resultSet.getString(5),      //comment text
-                            resultSet.getTimestamp(6))); //date created
+                            resultSet.getTimestamp(6),   //date created
+                            resultSet.getBoolean(7)));   //isByCitizen
         }
 
         connection.close();
@@ -70,7 +71,7 @@ public class CommentDBAccessor extends DBAccessor {
     }
 
     public List<Comment> getLast2CommentsForIdea(int ideaID) throws SQLException {
-        String QUERY =  "select Comment.ID, Comment.UserID, Comment.IdeaID, User.Name, Comment.Text, Comment.DateCreated " +
+        String QUERY =  "select Comment.ID, Comment.UserID, Comment.IdeaID, User.Name, Comment.Text, Comment.DateCreated, User.isCitizen " +
                         "from Comment join User on Comment.UserID = User.ID " +
                         "where Comment.IdeaID = ? " +
                         "order by Comment.DateCreated DESC " +
@@ -89,7 +90,8 @@ public class CommentDBAccessor extends DBAccessor {
                     resultSet.getInt(3),         //idea ID
                     resultSet.getString(4),      //user name
                     resultSet.getString(5),      //comment text
-                    resultSet.getTimestamp(6))); //date created
+                    resultSet.getTimestamp(6),   //date created
+                    resultSet.getBoolean(7)));   //isByCitizen
         }
 
         connection.close();

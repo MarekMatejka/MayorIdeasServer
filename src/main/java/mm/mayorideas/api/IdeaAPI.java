@@ -3,12 +3,14 @@ package mm.mayorideas.api;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import mm.mayorideas.db.IdeaDBAccessor;
+import mm.mayorideas.db.VoteDBAccessor;
 import mm.mayorideas.gson.NewIdeaPOSTGson;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.lang.reflect.Type;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -45,16 +47,18 @@ public class IdeaAPI {
     @Produces(MediaType.APPLICATION_JSON)
     public String getIdeaByID(
            @PathParam("id") String id,
-           @QueryParam("user_id") int userID) {
-       Gson gson = new Gson();
-       String result = "";
-       try {
-           IdeaDBAccessor db = IdeaDBAccessor.getInstance();
-           result = gson.toJson(db.getIdea(Integer.parseInt(id), userID));
-       } catch (SQLException e) {
-           e.printStackTrace();
-       }
-       return result;
+           @QueryParam("user_id") int userID,
+           @Context HttpServletResponse response) {
+        response.addHeader("Access-Control-Allow-Origin", "*");
+        Gson gson = new Gson();
+        String result = "";
+        try {
+            IdeaDBAccessor db = IdeaDBAccessor.getInstance();
+            result = gson.toJson(db.getIdea(Integer.parseInt(id), userID));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
     @GET
@@ -174,5 +178,34 @@ public class IdeaAPI {
         }
         System.out.println(result);
         return result;
+    }
+
+    @PUT
+    @Path("state")
+    public void deleteVote(
+            @QueryParam("idea_id") int ideaID,
+            @QueryParam("state") String state,
+            @Context HttpServletResponse response) {
+        response.addHeader("Access-Control-Allow-Origin", "*");
+        try {
+            IdeaDBAccessor db = IdeaDBAccessor.getInstance();
+            db.updateState(ideaID, state);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @OPTIONS
+    @Path("state")
+    public Response forceCollectParcelOptions(@HeaderParam("Access-Control-Request-Headers") String request) {
+        return getResponse(request);
+    }
+
+    private Response getResponse(@HeaderParam("Access-Control-Request-Headers") String request) {
+        Response.ResponseBuilder rb = Response.ok();
+        rb.header("Access-Control-Allow-Origin", "*")
+                .header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT")
+                .header("Access-Control-Allow-Headers", request);
+        return rb.build();
     }
 }

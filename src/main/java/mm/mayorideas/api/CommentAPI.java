@@ -6,7 +6,9 @@ import mm.mayorideas.db.CommentDBAccessor;
 import mm.mayorideas.gson.NewCommentPOSTGson;
 import mm.mayorideas.model.Comment;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import java.lang.reflect.Type;
 import java.sql.SQLException;
@@ -38,7 +40,9 @@ public class CommentAPI {
     @GET
     @Path("idea/{idea_id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public String getAllCommentsForIdea(@PathParam("idea_id") int ideaID) {
+    public String getAllCommentsForIdea(@PathParam("idea_id") int ideaID,
+                                        @Context HttpServletResponse response) {
+        response.addHeader("Access-Control-Allow-Origin", "*");
         List<Comment> comments = null;
         try {
             CommentDBAccessor db = CommentDBAccessor.getInstance();

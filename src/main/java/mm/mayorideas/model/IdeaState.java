@@ -25,4 +25,16 @@ public enum IdeaState {
             default: return OPEN;
         }
     }
+
+    public static int fromString(String state) {
+        if (OPEN.name().equalsIgnoreCase(state)) {
+            return OPEN.id;
+        } else if (IN_PROGRESS.name().equalsIgnoreCase(state)) {
+            return IN_PROGRESS.id;
+        } else if (RESOLVED.name().equalsIgnoreCase(state)) {
+            return RESOLVED.id;
+        } else {
+            return -1;
+        }
+    }
 }

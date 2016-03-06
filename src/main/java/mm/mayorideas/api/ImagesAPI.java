@@ -5,7 +5,9 @@ import mm.mayorideas.db.CommentDBAccessor;
 import mm.mayorideas.db.ImagesDBAccessor;
 
 import javax.activation.MimetypesFileTypeMap;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.File;
@@ -49,7 +51,9 @@ public class ImagesAPI {
     @GET
     @Path("/get/idea/{idea_id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public String getImageIdsForIdea(@PathParam("idea_id") int ideaID){
+    public String getImageIdsForIdea(@PathParam("idea_id") int ideaID,
+                                     @Context HttpServletResponse response) {
+        response.addHeader("Access-Control-Allow-Origin", "*");
         try {
             Gson gson = new Gson();
             ImagesDBAccessor db = ImagesDBAccessor.getInstance();

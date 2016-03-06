@@ -300,4 +300,19 @@ public class IdeaDBAccessor extends DBAccessor {
 
         return ideas;
     }
+
+    public boolean updateState(int ideaID, String state) throws SQLException {
+        String QUERY = "update Idea set State = ? where ID = ?;";
+
+        Connection connection = getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(QUERY);
+        preparedStatement.setInt(1, IdeaState.fromString(state));
+        preparedStatement.setInt(2, ideaID);
+        int updatedRows = preparedStatement.executeUpdate();
+
+        connection.close();
+        preparedStatement.close();
+
+        return updatedRows == 1;
+    }
 }
