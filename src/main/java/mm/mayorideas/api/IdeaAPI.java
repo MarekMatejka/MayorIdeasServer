@@ -182,7 +182,7 @@ public class IdeaAPI {
 
     @PUT
     @Path("state")
-    public void deleteVote(
+    public void changeIdeaState(
             @QueryParam("idea_id") int ideaID,
             @QueryParam("state") String state,
             @Context HttpServletResponse response) {

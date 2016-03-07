@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.lang.reflect.Type;
 import java.sql.SQLException;
 import java.util.List;
@@ -21,7 +22,9 @@ public class CommentAPI {
     @Path("add")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
-    public String addNewParcel(String message) {
+    public String addNewComment(String message,
+                               @Context HttpServletResponse response) {
+        response.addHeader("Access-Control-Allow-Origin", "*");
         Gson gson = new Gson();
         Type type = new TypeToken<NewCommentPOSTGson>() {}.getType();
         NewCommentPOSTGson comment = gson.fromJson(message, type);
@@ -80,5 +83,19 @@ public class CommentAPI {
             e.printStackTrace();
         }
         return 0;
+    }
+
+    @OPTIONS
+    @Path("add")
+    public Response forceCollectParcelOptions(@HeaderParam("Access-Control-Request-Headers") String request) {
+        return getResponse(request);
+    }
+
+    private Response getResponse(@HeaderParam("Access-Control-Request-Headers") String request) {
+        Response.ResponseBuilder rb = Response.ok();
+        rb.header("Access-Control-Allow-Origin", "*")
+                .header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT")
+                .header("Access-Control-Allow-Headers", request);
+        return rb.build();
     }
 }
