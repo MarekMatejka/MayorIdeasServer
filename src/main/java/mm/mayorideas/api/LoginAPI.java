@@ -42,7 +42,9 @@ public class LoginAPI {
     @Path("register")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public String registerNewUser(String message) {
+    public String registerNewUser(String message,
+                                  @Context HttpServletResponse response) {
+        response.addHeader("Access-Control-Allow-Origin", "*");
         Gson gson = new Gson();
         Type type = new TypeToken<NewUserDetails>() {}.getType();
         NewUserDetails newUserDetails = gson.fromJson(message, type);
@@ -60,7 +62,13 @@ public class LoginAPI {
     }
 
     @OPTIONS
-    public Response forceCollectParcelOptions(@HeaderParam("Access-Control-Request-Headers") String request) {
+    @Path("register")
+    public Response registerOptions(@HeaderParam("Access-Control-Request-Headers") String request) {
+        return getResponse(request);
+    }
+
+    @OPTIONS
+    public Response loginOptions(@HeaderParam("Access-Control-Request-Headers") String request) {
         return getResponse(request);
     }
 
