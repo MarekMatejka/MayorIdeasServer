@@ -132,7 +132,9 @@ public class IdeaAPI {
     @GET
     @Path("trending")
     @Produces(MediaType.APPLICATION_JSON)
-    public String getTrendingIdeas(@QueryParam("user_id") int userID) {
+    public String getTrendingIdeas(@QueryParam("user_id") int userID,
+                                   @Context HttpServletResponse response) {
+        response.addHeader("Access-Control-Allow-Origin", "*");
         Gson gson = new Gson();
         String result = "";
         try {
