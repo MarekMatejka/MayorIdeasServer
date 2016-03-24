@@ -5,6 +5,7 @@ import mm.mayorideas.gson.LoginDetails;
 import mm.mayorideas.gson.LoginDetailsResponse;
 import mm.mayorideas.gson.NewUserDetails;
 import mm.mayorideas.gson.UserStats;
+import mm.mayorideas.security.AESEncryptor;
 
 import java.sql.*;
 import java.util.Collections;
@@ -29,9 +30,10 @@ public class UserDBAccessor extends DBAccessor {
                         "from User " +
                         "where User.Username = ? and User.Password = ? and User.isCitizen = ?;";
 
+        AESEncryptor aes = new AESEncryptor();
         Connection connection = getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(QUERY);
-        preparedStatement.setString(1, loginDetails.getUsername());
+        preparedStatement.setString(1, aes.encrypt(loginDetails.getUsername()));
         preparedStatement.setString(2, loginDetails.getPassword());
         preparedStatement.setBoolean(3, loginDetails.isCitizen());
         ResultSet resultSet = preparedStatement.executeQuery();
@@ -54,10 +56,11 @@ public class UserDBAccessor extends DBAccessor {
     public int addNewUser(NewUserDetails newUserDetails) throws SQLException {
         String QUERY = "insert into User values(default, ?, ?, ?, ?);";
 
+        AESEncryptor aes = new AESEncryptor();
         Connection connection = getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(QUERY, Statement.RETURN_GENERATED_KEYS);
-        preparedStatement.setString(1, newUserDetails.getUsername());
-        preparedStatement.setString(2, newUserDetails.getName());
+        preparedStatement.setString(1, aes.encrypt(newUserDetails.getUsername()));
+        preparedStatement.setString(2, aes.encrypt(newUserDetails.getName()));
         preparedStatement.setString(3, newUserDetails.getPassword());
         preparedStatement.setBoolean(4, newUserDetails.isCitizen());
         preparedStatement.executeUpdate();
