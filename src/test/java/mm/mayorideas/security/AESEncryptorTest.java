@@ -17,4 +17,12 @@ public class AESEncryptorTest {
         System.out.println(aes.encrypt(name));
         System.out.println(sha.encrypt(password));
     }
+
+    @Test
+    public void testDecryption() {
+        String text = "VsI+GaWUEaIQ0tpY3mcSBxj4mVJ2GiFLWLN2YcreJyM=";
+
+        AESEncryptor aes = new AESEncryptor();
+        System.out.println(aes.decrypt(text));
+    }
 }
