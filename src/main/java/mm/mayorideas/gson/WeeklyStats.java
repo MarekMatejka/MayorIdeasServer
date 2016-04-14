@@ -29,4 +29,20 @@ public class WeeklyStats {
         this.interactionsPerWeek = interactionsPerWeek;
         this.interactionsTrend = interactionsTrend;
     }
+
+    public int getNewIdeasPerWeek() {
+        return newIdeasPerWeek;
+    }
+
+    public int getInProgressIdeasPerWeek() {
+        return inProgressIdeasPerWeek;
+    }
+
+    public int getClosedIdeasPerWeek() {
+        return closedIdeasPerWeek;
+    }
+
+    public int getInteractionsPerWeek() {
+        return interactionsPerWeek;
+    }
 }

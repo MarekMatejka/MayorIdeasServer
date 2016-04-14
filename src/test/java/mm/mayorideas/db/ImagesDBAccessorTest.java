@@ -1,0 +1,17 @@
+package mm.mayorideas.db;
+
+import org.junit.Test;
+
+import java.util.List;
+
+import static org.junit.Assert.*;
+
+public class ImagesDBAccessorTest {
+
+    @Test
+    public void testGetImageIdsForIdea() throws Exception {
+        ImagesDBAccessor db = ImagesDBAccessor.getInstance();
+        final List<Integer> imageIdsForIdea = db.getImageIdsForIdea(1);
+        assertTrue(imageIdsForIdea.size() >= 1);
+    }
+}

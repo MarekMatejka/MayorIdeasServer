@@ -11,4 +11,16 @@ public class OverallIdeaStats {
         this.totalInProgressIdeas = totalInProgressIdeas;
         this.totalClosedIdeas = totalClosedIdeas;
     }
+
+    public int getTotalOpenIdeas() {
+        return totalOpenIdeas;
+    }
+
+    public int getTotalInProgressIdeas() {
+        return totalInProgressIdeas;
+    }
+
+    public int getTotalClosedIdeas() {
+        return totalClosedIdeas;
+    }
 }

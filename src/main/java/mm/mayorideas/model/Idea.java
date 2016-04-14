@@ -130,4 +130,27 @@ public class Idea {
     public IdeaState getIdeaState() {
         return ideaState;
     }
+
+    @Override
+    public String toString() {
+        return "Idea{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", categoryID=" + categoryID +
+                ", categoryName='" + categoryName + '\'' +
+                ", description='" + description + '\'' +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
+                ", authorID=" + authorID +
+                ", authorName='" + authorName + '\'' +
+                ", dateCreated=" + dateCreated +
+                ", score=" + score +
+                ", numOfVotes=" + numOfVotes +
+                ", numOfComments=" + numOfComments +
+                ", userVote=" + userVote +
+                ", isUserFollowing=" + isUserFollowing +
+                ", coverImageID=" + coverImageID +
+                ", ideaState=" + ideaState +
+                '}';
+    }
 }

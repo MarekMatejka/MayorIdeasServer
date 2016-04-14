@@ -16,4 +16,24 @@ public class UserStats {
         this.comments = comments;
         this.follows = follows;
     }
+
+    public int getUserID() {
+        return userID;
+    }
+
+    public int getIdeas() {
+        return ideas;
+    }
+
+    public int getVotes() {
+        return votes;
+    }
+
+    public int getComments() {
+        return comments;
+    }
+
+    public int getFollows() {
+        return follows;
+    }
 }

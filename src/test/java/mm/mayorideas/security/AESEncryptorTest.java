@@ -2,27 +2,22 @@ package mm.mayorideas.security;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+
 public class AESEncryptorTest {
+
+    private static final String DECRYPTED = "marek";
+    private static final String ENCRYPTED = "7MjMZdGhB/O7D1P7hb9zag==";
 
     @Test
     public void testEncryption() {
-        String username = "marek@web.gov.uk";
-        String name = "Marek Web Gov";
-        String password = "test";
-
         AESEncryptor aes = new AESEncryptor();
-        SHA256Encryptor sha = new SHA256Encryptor();
-
-        System.out.println(aes.encrypt(username));
-        System.out.println(aes.encrypt(name));
-        System.out.println(sha.encrypt(password));
+        assertEquals(ENCRYPTED, aes.encrypt(DECRYPTED));
     }
 
     @Test
     public void testDecryption() {
-        String text = "VsI+GaWUEaIQ0tpY3mcSBxj4mVJ2GiFLWLN2YcreJyM=";
-
         AESEncryptor aes = new AESEncryptor();
-        System.out.println(aes.decrypt(text));
+        assertEquals(DECRYPTED, aes.decrypt(ENCRYPTED));
     }
 }
