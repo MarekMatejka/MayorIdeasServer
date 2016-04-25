@@ -5,6 +5,10 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.glassfish.jersey.servlet.ServletContainer;
 
+/**
+ * With help from Nikolay Grozev.
+ * Source: https://nikolaygrozev.wordpress.com/2014/10/16/rest-with-embedded-jetty-and-jersey-in-a-single-jar-step-by-step/
+ */
 public final class Main {
 
     private static final int PORT = 8015;

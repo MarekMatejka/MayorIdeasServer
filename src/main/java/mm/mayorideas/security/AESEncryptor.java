@@ -13,6 +13,10 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 import java.security.spec.KeySpec;
 
+/**
+ * Based on previous group work.
+ * Source: https://github.com/begleynk/SEG3-Server/blob/master/src/Sockets/Encryptor.java
+ */
 public final class AESEncryptor implements Encryptor{
 
     public IvParameterSpec getIv() {
